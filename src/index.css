@@ -148,6 +148,7 @@ button[disabled] {
 }
 
 .blog-body {
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 
@@ -159,4 +160,8 @@ button[disabled] {
 
 .not-found p {
   margin-bottom: 20px;
+}
+
+.displayNone {
+  display: none;
 }

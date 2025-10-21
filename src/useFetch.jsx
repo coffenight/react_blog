@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 
-
 const useFetch = (url) => {
 	const [data, setData] = useState(null);
 	const [isLoading, setLoading] = useState(true);
-	const [error, setError] = useState(null)
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		fetch(url)
+		const abortCont = new AbortController();
+
+		fetch(url, { signal: abortCont.signal })
 			.then((res) => {
 				if (res.ok !== true) {
-					throw Error('Could not fetch from server')
+					throw Error("Could not fetch from server");
 				}
 				return res.json();
 			})
@@ -20,16 +21,24 @@ const useFetch = (url) => {
 				setError(null);
 			})
 			.catch((err) => {
-				setError(err.message);
-				setLoading(false);
+				if (err.name === "AbortError") {
+					console.log("Fetch был остановлен нами принудительно в связи с размантажом компонента");
+				} else {
+					setError(err.message);
+					setLoading(false);
+				}
 			});
-    }, []);
-    
-    return {
-        data,
-        isLoading,
-        error
-    }
-}
+
+		return () => {
+			abortCont.abort();
+		};
+	}, []);
+
+	return {
+		data,
+		isLoading,
+		error,
+	};
+};
 
 export default useFetch;
