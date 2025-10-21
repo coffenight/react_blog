@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFetch = (url) => {
+const useFetch = (url, updateFlag) => {
 	const [data, setData] = useState(null);
 	const [isLoading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -27,12 +27,12 @@ const useFetch = (url) => {
 					setError(err.message);
 					setLoading(false);
 				}
-			});
+			}, [updateFlag]);
 
 		return () => {
 			abortCont.abort();
 		};
-	}, []);
+	});
 
 	return {
 		data,

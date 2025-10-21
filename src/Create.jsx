@@ -1,26 +1,34 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Create = () => {
-    const [title, setTitle] = useState('Название');
-    const [body, setBody] = useState('');
-    const [author, setAuthor] = useState('');
+	const [title, setTitle] = useState("Название");
+	const [body, setBody] = useState("");
+	const [author, setAuthor] = useState("");
+	const [isPending, setIsPending] = useState(false);
+	const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const blog = { title, body, author };
-        fetch("http://localhost:8000/posts", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body:JSON.stringify(blog)
-        }).then(() => {
-            console.log("New post was added");
-            
-        });
-        
-    }
+	const clearForm = () => {
+			setBody("");
+			setTitle("");
+			setAuthor("");
+	}
 
-
-
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		const blog = { title, body, author };
+		setIsPending(true);
+		fetch("http://localhost:8000/posts", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(blog),
+		}).then(() => {
+			console.log("New post was added");
+			setIsPending(false);
+			clearForm();
+			navigate('/');
+		});
+	};
 
 	return (
 		<div className="create">
@@ -54,7 +62,8 @@ const Create = () => {
 					<option value="Mari Jani">Mari Jani</option>
 					<option value="Tom Soer">Tom Soer</option>
 				</select>
-				<button>Create Post</button>
+				{isPending && <button disabled>Adding post...</button>}
+				{!isPending && <button>Create Post</button>}
 			</form>
 		</div>
 	);
